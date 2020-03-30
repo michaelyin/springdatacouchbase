@@ -4,7 +4,7 @@
 	<!-- send debug messages to System.out -->
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
-			<pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level [%file:%line] %msg%n</pattern>
+			<pattern>%-5level [%date]:[%logger{36}]: [%thread]: %message%n</pattern>
 		</encoder>
 	</appender>
 
@@ -13,3 +13,5 @@
 		<appender-ref ref="STDOUT" />
 	</root>
 </configuration>
+<!-- logging.pattern.console=%-5level [%date]:[%logger{36}]: [%thread]: %message%n -->
+<!-- %d{yyyy-MM-dd HH:mm:ss} %-5level [%file:%line] %msg%n -->
