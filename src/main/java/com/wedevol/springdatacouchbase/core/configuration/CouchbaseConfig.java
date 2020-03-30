@@ -8,11 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.couchbase.config.AbstractCouchbaseConfiguration;
+import org.springframework.data.couchbase.config.BeanNames;
 import org.springframework.data.couchbase.core.CouchbaseTemplate;
 import org.springframework.data.couchbase.core.query.Consistency;
 import org.springframework.data.couchbase.repository.config.EnableCouchbaseRepositories;
 import org.springframework.data.couchbase.repository.config.RepositoryOperationsMapping;
 import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.cluster.ClusterInfo;
 import com.couchbase.client.java.env.CouchbaseEnvironment;
 import com.couchbase.client.java.env.DefaultCouchbaseEnvironment;
 import com.wedevol.springdatacouchbase.core.dao.doc.PhoneDoc;
@@ -29,6 +31,8 @@ import com.wedevol.springdatacouchbase.core.dao.doc.PlaceDoc;
 public class CouchbaseConfig extends AbstractCouchbaseConfiguration {
 
   protected static final Logger logger = LoggerFactory.getLogger(CouchbaseConfig.class);
+  String sslKeystoreFile = "C:\\p4\\BH\\Rel3_2\\cbrs\\pki\\CA\\certs\\server.jks";
+  String sslKeyStorePass = "secret";
 
   @Autowired
   private CouchbaseSetting couchbaseSetting;
@@ -53,10 +57,15 @@ public class CouchbaseConfig extends AbstractCouchbaseConfiguration {
 
   @Override
   protected CouchbaseEnvironment getEnvironment() {
-    DefaultCouchbaseEnvironment.builder().connectTimeout(60000) // by default 5 sec (5000 ms)
+	  logger.info("get couchbase environment here");
+     return  DefaultCouchbaseEnvironment.builder().connectTimeout(60000) // by default 5 sec (5000 ms)
+        .sslEnabled(true)
+        .sslKeystoreFile(sslKeystoreFile)
+        .sslKeystorePassword(sslKeyStorePass)
         .queryTimeout(20000) // by default 75 sec (75000 ms)
-        .socketConnectTimeout(45000); // by default 1 sec (1000 ms)
-    return super.getEnvironment();
+        .socketConnectTimeout(45000)
+        .build(); // by default 1 sec (1000 ms)
+   // return super.getEnvironment();
   }
 
   @Override
@@ -80,11 +89,17 @@ public class CouchbaseConfig extends AbstractCouchbaseConfiguration {
 
   @Bean(name = "placeBucket") // this is to differentiate with the default beans
   public Bucket placeBucket() throws Exception {
-    return couchbaseCluster().openBucket("places", "123456abC"); // TODO you can get values from properties
+    return couchbaseCluster().openBucket("places", "123456abc"); // TODO you can get values from properties
+  }
+  
+  @Bean(name = "PLACE_CI")
+  public ClusterInfo placeCouchbaseClusterInfo() throws Exception {
+      return couchbaseCluster().clusterManager("admin", "cowtip78").info();
   }
 
   @Bean(name = "placeBucketTemplate") // this is to differentiate with the default beans
   public CouchbaseTemplate placeTemplate() throws Exception {
+	  //ClusterInfo info = couchbaseCluster().clusterManager("places", "123456abc").info();
     CouchbaseTemplate template = new CouchbaseTemplate(couchbaseClusterInfo(), // reuse the default bean
         placeBucket(), // the bucket is non-default
         mappingCouchbaseConverter(), translationService() // default beans here as well
