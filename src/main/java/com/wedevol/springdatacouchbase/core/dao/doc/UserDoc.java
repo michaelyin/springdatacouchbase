@@ -2,6 +2,8 @@ package com.wedevol.springdatacouchbase.core.dao.doc;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.OptionalDouble;
+
 import org.springframework.data.couchbase.core.mapping.Document;
 import com.couchbase.client.java.repository.annotation.Field;
 import com.couchbase.client.java.repository.annotation.Id;
@@ -31,8 +33,18 @@ public class UserDoc implements Serializable {
   private Integer age;
   @Field
   private String email;
+  @Field
+  private OptionalDouble power;
 
-  public UserDoc() {}
+  public OptionalDouble getPower() {
+	return power;
+}
+
+public void setPower(OptionalDouble power) {
+	this.power = power;
+}
+
+public UserDoc() {}
 
   public UserDoc(String key, Long id, String name, List<String> nicknames, Integer age, String email) {
     super();
