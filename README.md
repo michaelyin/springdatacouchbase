@@ -1,6 +1,9 @@
 # Spring Data with Couchbase + Tests
 
-This is my template for a spring boot project that uses spring data and Couchbase. It includes integration and unit tests.
+This is my template for a spring boot project that uses spring data and Couchbase. It includes integration and unit tests.  
+
+In Couchbase, create users bucket and password 123456;
+              creae places bucket and password 123456abc.
 
 ## Architecture
  
